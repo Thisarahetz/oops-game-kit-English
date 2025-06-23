@@ -1,67 +1,102 @@
 /*
  * @Author: dgflash
  * @Date: 2021-07-03 16:13:17
- * @LastEditors: bansomin
- * @LastEditTime: 2024-03-31 01:17:02
+ * @LastEditors: dgflash
+ * @LastEditTime: 2022-08-29 13:37:08
  */
-import { _decorator } from "cc";
+import { _decorator, sys } from "cc";
 import { oops } from "../../../../../extensions/oops-plugin-framework/assets/core/Oops";
+import { JsonUtil } from "../../../../../extensions/oops-plugin-framework/assets/core/utils/JsonUtil";
 import { ecs } from "../../../../../extensions/oops-plugin-framework/assets/libs/ecs/ECS";
 import { CCVMParentComp } from "../../../../../extensions/oops-plugin-framework/assets/module/common/CCVMParentComp";
-import { ModuleUtil } from "../../../../../extensions/oops-plugin-framework/assets/module/common/ModuleUtil";
-import { DemoViewComp } from "../../account/view/DemoViewComp";
-import { smc } from "../../common/SingletonModuleComp";
+import { GameEvent } from "../../common/config/GameEvent";
 import { UIID } from "../../common/config/GameUIConfig";
+import { smc } from "../../common/ecs/SingletonModuleComp";
+import { TableRoleJob } from "../../common/table/TableRoleJob";
+import { TableRoleLevelUp } from "../../common/table/TableRoleLevelUp";
 
 const { ccclass, property } = _decorator;
 
-/** Game resource loading */
+/** 游戏资源加载 */
 @ccclass('LoadingViewComp')
 @ecs.register('LoadingView', false)
 export class LoadingViewComp extends CCVMParentComp {
-    /** VM component binding data */
+    /** VM 组件绑定数据 */
     data: any = {
-        /** Current progress of loading resources */
+        /** 加载资源当前进度 */
         finished: 0,
-        /** Maximum progress of loading resources */
+        /** 加载资源最大进度 */
         total: 0,
-        /** Loading resource progress ratio value */
+        /** 加载资源进度比例值 */
         progress: "0",
-        /** Loading process prompt text */
+        /** 加载流程中提示文本 */
         prompt: ""
     };
 
     private progress: number = 0;
 
+    reset(): void {
+        setTimeout(() => {
+            // 关闭加载界面
+            oops.gui.remove(UIID.Loading);
+
+            // 打开游戏主界面（自定义逻辑）
+            oops.gui.open(UIID.Demo);
+        }, 500);
+    }
+
     start() {
-        this.enter();
+        if (!sys.isNative) {
+            this.enter();
+        }
     }
 
     enter() {
+        this.addEvent();
         this.loadRes();
     }
 
-    /** Load resources */
+    private addEvent() {
+        this.on(GameEvent.LoginSuccess, this.onHandler, this);
+    }
+
+    private onHandler(event: string, args: any) {
+        switch (event) {
+            case GameEvent.LoginSuccess:
+                // 加载流程结束，移除加载提示界面
+                this.ent.remove(LoadingViewComp);
+                break;
+        }
+    }
+
+    /** 加载资源 */
     private async loadRes() {
         this.data.progress = 0;
         await this.loadCustom();
         this.loadGameRes();
     }
 
-    /** Load game local JSON data (custom content) */
+    /** 加载游戏本地JSON数据（自定义内容） */
     private loadCustom() {
-        // Load multilingual prompt text for game local JSON data
+        // 加载游戏本地JSON数据的多语言提示文本
         this.data.prompt = oops.language.getLangByID("loading_load_json");
+
+        return new Promise(async (resolve, reject) => {
+            await JsonUtil.loadAsync(TableRoleJob.TableName);
+            await JsonUtil.loadAsync(TableRoleLevelUp.TableName);
+            resolve(null);
+        });
     }
 
-    /** Load initial game content resources */
+    /** 加载初始游戏内容资源 */
     private loadGameRes() {
-        // Load multilingual prompt text for initial game content resources
+        // 加载初始游戏内容资源的多语言提示文本
         this.data.prompt = oops.language.getLangByID("loading_load_game");
+
         oops.res.loadDir("game", this.onProgressCallback.bind(this), this.onCompleteCallback.bind(this));
     }
 
-    /** Loading progress event */
+    /** 加载进度事件 */
     private onProgressCallback(finished: number, total: number, item: any) {
         this.data.finished = finished;
         this.data.total = total;
@@ -73,13 +108,12 @@ export class LoadingViewComp extends CCVMParentComp {
         }
     }
 
-    /** Loading complete event */
-    private async onCompleteCallback() {
-        // Get multilingual prompt text for user information
+    /** 加载完成事件 */
+    private onCompleteCallback() {
+        // 获取用户信息的多语言提示文本
         this.data.prompt = oops.language.getLangByID("loading_load_player");
-        await ModuleUtil.addViewUiAsync(smc.account, DemoViewComp, UIID.Demo);
-        ModuleUtil.removeViewUi(this.ent, LoadingViewComp, UIID.Loading);
-    }
 
-    reset(): void { }
+        // 初始化帐号模块
+        smc.account.connect();
+    }
 }

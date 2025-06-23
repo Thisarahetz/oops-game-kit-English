@@ -1,13 +1,14 @@
 {
-  "_sourceId": "c30b28da-749e-479b-bcb6-cecd8d7be9e3",
   "creator": {
-    "version": "3.8.5"
+    "version": "3.8.4"
   },
-  "dependencies": {
-    "crypto-es": "^1.2.7"
+  "dependencies": {},
+  "description": "oops-framework",
+  "devDependencies": {
+    "@types/node": "^17.0.25"
   },
-  "description": "游戏项目模板",
-  "name": "oops-game-kit",
-  "uuid": "00d7d957-a3e8-4ad6-80f4-2fcfb235bca4",
-  "version": "3.6.3"
+  "name": "oops-framework",
+  "uuid": "ac14c0b3-e39d-45b4-84b7-5e4805344ef1",
+  "_sourceId": "c30b28da-749e-479b-bcb6-cecd8d7be9e3",
+  "_storeId": "6d5385bb101ffaeb8f70c14e4879dbe9"
 }

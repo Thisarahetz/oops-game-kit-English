@@ -1,24 +1,23 @@
 /*
  * @Author: dgflash
  * @Date: 2022-07-22 17:06:22
- * @LastEditors: bansomin
- * @LastEditTime: 2024-03-31 01:20:18
+ * @LastEditors: dgflash
+ * @LastEditTime: 2022-09-22 14:41:58
  */
+
 import { oops } from "../../../../../extensions/oops-plugin-framework/assets/core/Oops";
 import { AsyncQueue, NextFunction } from "../../../../../extensions/oops-plugin-framework/assets/libs/collection/AsyncQueue";
 import { ecs } from "../../../../../extensions/oops-plugin-framework/assets/libs/ecs/ECS";
-import { ModuleUtil } from "../../../../../extensions/oops-plugin-framework/assets/module/common/ModuleUtil";
 import { UIID } from "../../common/config/GameUIConfig";
 import { Initialize } from "../Initialize";
 import { LoadingViewComp } from "../view/LoadingViewComp";
 
-/** Initialize game common resources */
+/** 初始化游戏公共资源 */
 @ecs.register('InitRes')
 export class InitResComp extends ecs.Comp {
     reset() { }
 }
 
-/** Initialize resource logic registered in Initialize module */
 @ecs.register('Initialize')
 export class InitResSystem extends ecs.ComblockSystem implements ecs.IEntityEnterSystem {
     filter(): ecs.IMatcher {
@@ -28,52 +27,53 @@ export class InitResSystem extends ecs.ComblockSystem implements ecs.IEntityEnte
     entityEnter(e: Initialize): void {
         var queue: AsyncQueue = new AsyncQueue();
 
-        // Load custom resources
+        // 加载自定义资源
         this.loadCustom(queue);
-        // Load language packs
+        // 加载多语言包
         this.loadLanguage(queue);
-        // Load common resources
+        // 加载公共资源
         this.loadCommon(queue);
-        // Load game content loading progress UI
+        // 加载游戏内容加载进度提示界面
         this.onComplete(queue, e);
 
         queue.play();
     }
 
-    /** Load custom content (optional) */
+    /** 加载自定义内容（可选） */
     private loadCustom(queue: AsyncQueue) {
         queue.push(async (next: NextFunction, params: any, args: any) => {
-            // Load font corresponding to language
+            // 加载多语言对应字体
             oops.res.load("language/font/" + oops.language.current, next);
         });
     }
 
-    /** Load language packs (optional) */
+    /** 加载化语言包（可选） */
     private loadLanguage(queue: AsyncQueue) {
         queue.push((next: NextFunction, params: any, args: any) => {
-            // Set default language
+            // 设置默认语言
             let lan = oops.storage.get("language");
             if (lan == null || lan == "") {
                 lan = "zh";
                 oops.storage.set("language", lan);
             }
 
-            // Load language pack resources
+            // 加载语言包资源
             oops.language.setLanguage(lan, next);
         });
     }
 
-    /** Load common resources (required) */
+    /** 加载公共资源（必备） */
     private loadCommon(queue: AsyncQueue) {
         queue.push((next: NextFunction, params: any, args: any) => {
             oops.res.loadDir("common", next);
         });
     }
 
-    /** Load complete and enter game content loading interface */
+    /** 加载完成进入游戏内容加载界面 */
     private onComplete(queue: AsyncQueue, e: Initialize) {
         queue.complete = async () => {
-            ModuleUtil.addViewUi(e, LoadingViewComp, UIID.Loading);
+            var node = await oops.gui.openAsync(UIID.Loading);
+            if (node) e.add(node.getComponent(LoadingViewComp) as ecs.Comp);
             e.remove(InitResComp);
         };
     }

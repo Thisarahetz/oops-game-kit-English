@@ -1,3 +1,4 @@
+
 import { JsonUtil } from "../../../../../extensions/oops-plugin-framework/assets/core/utils/JsonUtil";
 
 export class TableLanguage {
@@ -11,14 +12,14 @@ export class TableLanguage {
         this.id = id;
     }
 
-    /** ID [KEY] */
+    /** 编号【KEY】 */
     id: number = 0;
 
-    /** Simplified Chinese */
+    /** 简体中文 */
     get zh(): string {
         return this.data.zh;
     }
-    /** English */
+    /** 英文 */
     get en(): string {
         return this.data.en;
     }

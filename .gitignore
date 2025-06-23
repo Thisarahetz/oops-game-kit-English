@@ -1,11 +1,7 @@
+
 #///////////////////////////
 # Cocos Creator 3D Project
 #///////////////////////////
-oops-plugin-framework/
-oops-plugin-framework-tools/
-oops-plugin-hot-update/
-oops-plugin-excel-to-json/
-oops_framework_remote/
 library/
 temp/
 local/
@@ -15,7 +11,7 @@ native
 #//////////////////////////
 # NPM
 #//////////////////////////
-# node_modules/
+node_modules/
 
 #//////////////////////////
 # VSCode
@@ -26,4 +22,3 @@ native
 # WebStorm
 #//////////////////////////
 .idea/
-/node_modules/*

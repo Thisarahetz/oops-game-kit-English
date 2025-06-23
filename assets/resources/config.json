@@ -14,36 +14,6 @@
         "webSocketReceiveTime": 10000,
         "webSocketReconnetTimeOut": 3000
     },
-    "gui": [
-        {
-            "name": "LayerGame",
-            "type": "Node"
-        },
-        {
-            "name": "LayerUI",
-            "type": "UI"
-        },
-        {
-            "name": "LayerPopUp",
-            "type": "PopUp"
-        },
-        {
-            "name": "LayerDialog",
-            "type": "Dialog"
-        },
-        {
-            "name": "LayerSystem",
-            "type": "Dialog"
-        },
-        {
-            "name": "LayerNotify",
-            "type": "Notify"
-        },
-        {
-            "name": "LayerGuide",
-            "type": "Node"
-        }
-    ],
     "language": {
         "default": "zh",
         "type": [
@@ -59,9 +29,9 @@
     "bundle": {
         "enable": false,
         "server": "http://localhost",
-        "default": "bundle",
+        "default": "resources",
         "packages": {
-            "bundle": "ea6b9"
+            "bundle": ""
         }
     }
 }

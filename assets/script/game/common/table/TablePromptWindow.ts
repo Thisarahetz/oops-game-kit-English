@@ -1,13 +1,6 @@
-/*
- * @Author: dgflash
- * @Date: 2022-06-02 09:38:48
- * @LastEditors: dgflash
- * @LastEditTime: 2022-08-02 14:26:35
- */
 
 import { JsonUtil } from "../../../../../extensions/oops-plugin-framework/assets/core/utils/JsonUtil";
 
-/** 演示oops-plugin-excel-to-json插件生成的配置表数据结构（可删除） */
 export class TablePromptWindow {
     static TableName: string = "PromptWindow";
 
@@ -16,25 +9,29 @@ export class TablePromptWindow {
     init(id: number, id1: number, id2: number) {
         var table = JsonUtil.get(TablePromptWindow.TableName);
         this.data = table[id][id1][id2];
-        this.id = id;
-        this.id1 = id1;
-        this.id2 = id2;
+        this.id = id;        this.id1 = id1;        this.id2 = id2;
     }
 
-    id: number = 0;
-    id1: number = 0;
+    /** 编号【KEY】 */
+    id: number = 0;    /** 双主键【KEY】 */
+    id1: number = 0;    /** 双主键【KEY】 */
     id2: number = 0;
 
+    /** 标题 */
     get title(): string {
         return this.data.title;
     }
+    /** 描述 */
     get describe(): string {
         return this.data.describe;
     }
+    /** 描述 */
     get array(): any {
         return this.data.array;
     }
+    /** 生命 */
     get hp(): number {
         return this.data.hp;
     }
 }
+    
